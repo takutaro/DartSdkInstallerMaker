@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+
+    <!-- PS> [Guid]::NewGuid().tostring().toupper() -->
+    <?define DartSDKUpgradeCode = "0C37447D-CB0E-4794-BEF7-450F3D46E922" ?>
+    <?define DartSDKZipGuid = "93700999-0281-4DB5-AE6F-7995A473DB7B" ?>
+    <?define SevenZipGuid = "A2A411BE-C01A-4FFF-8E59-CD6AC79093B8" ?>
+
+    <Product Id="*" Name="$(var.DartSDKName)" Language="1041" Version="$(var.DartSDKVersion)" Manufacturer="taku" UpgradeCode="$(var.DartSDKUpgradeCode)">
+
+        <Package Description="$(var.DartSDKName)" Comments="$(var.DartSDKName)" Platform="$(var.DartSDKPlatform)" InstallerVersion="200" Compressed="yes" />
+        <MediaTemplate EmbedCab="yes" />
+        <Icon Id="dart.ico" SourceFile="dart.ico"/>
+        <Property Id="ARPPRODUCTICON" Value="dart.ico" />
+
+        <Upgrade Id="$(var.DartSDKUpgradeCode)">
+            <UpgradeVersion Property="OLDERFOUND" Maximum="$(var.DartSDKVersion)" IncludeMinimum="no" />
+            <UpgradeVersion Property="NEWERFOUND" Minimum="$(var.DartSDKVersion)" IncludeMinimum="no" OnlyDetect="yes" />
+        </Upgrade>
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="$(var.ProgramFilesDir)" Name="PFiles">
+                <Directory Id="DARTSDK" Name="DartSDK">
+                    <Component Id="DARTSDK_ZIP" DiskId="1" Guid="$(var.DartSDKZipGuid)" Win64="$(var.Win64)">
+                        <File Id="DARTSDK_ZIP" Name="$(var.DartSDKZip)" Source="$(var.DartSDKZip)" />
+                        <Environment Id='UpdatePath' Name='PATH' Action='set' System='yes' Part='last' Value='[DARTSDK]dart-sdk\bin' />
+                    </Component>
+                    <Directory Id="SEVENZIP" Name="7zip">
+                        <Component Id="SEVENZIP" DiskId="1" Guid="$(var.SevenZipGuid)" Win64="$(var.Win64)">
+                            <File Id="SEVENZIP" Name="7za.exe" Source="7zip\7za.exe" />
+                            <File Id="Sza.dll" Name="7za.dll" Source="7zip\7za.dll" />
+                            <File Id="Szxa.dll" Name="7zxa.dll" Source="7zip\7zxa.dll" />
+                            <File Id="Sz_extra.7z" Name="7z1900-extra.7z" Source="7zip\7z1900-extra.7z" />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature Id="DefaultFeature" Level="1">
+            <ComponentRef Id="DARTSDK_ZIP" />
+            <ComponentRef Id="SEVENZIP" />
+        </Feature>
+
+        <WixVariable Id="WixUILicenseRtf" Value="dart_license.rtf" />
+        <Binary Id="dart_license.rtf" SourceFile="dart_license.rtf" />
+        <UI>
+            <UIRef Id="WixUI_Minimal" />
+        </UI>
+
+        <CustomAction Id='NoDowngrade' Error="A newer version is already installed." />
+        <CustomAction Id="RMDIR_CMD" Property="RMDIR" Value="&quot;cmd.exe&quot; /s /c &quot;rmdir /q /s &quot;[DARTSDK]dart-sdk&quot;&quot;" />
+        <CustomAction Id="UNZIP_CMD" Property="UNZIP" Value="&quot;[#SEVENZIP]&quot; x -aoa -o&quot;[DARTSDK]&quot; &quot;[#DARTSDK_ZIP]&quot;" />
+        <CustomAction Id="RMDIR" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="ignore" Impersonate="no" />
+        <CustomAction Id="UNZIP" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Return="check" Impersonate="no" />
+        <InstallExecuteSequence>
+            <Custom Action='NoDowngrade' After='FindRelatedProducts'>NEWERFOUND</Custom>
+            <Custom Action="RMDIR_CMD" After="CostFinalize">Installed</Custom>
+            <Custom Action="UNZIP_CMD" After="CostFinalize"><![CDATA[REMOVE<>"ALL"]]></Custom>
+            <RemoveExistingProducts After="InstallInitialize"/>
+            <Custom Action="RMDIR" After="InstallInitialize">Installed</Custom>
+            <Custom Action="UNZIP" After="InstallFiles"><![CDATA[REMOVE<>"ALL"]]></Custom>
+        </InstallExecuteSequence>
+
+    </Product>
+
+</Include>

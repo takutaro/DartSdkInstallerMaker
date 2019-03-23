@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?define Win64 = "no" ?>
+<?define ProgramFilesDir = "ProgramFilesFolder" ?>
+<?define DartSDKPlatform ="x86" ?>
+<?define DartSDKName = "Dart SDK (32bit)" ?>
+<?define DartSDKZip = "dartsdk-windows-ia32-release.zip" ?>
+<?define DartSDKVersion = "$(var.Version)" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?include dartsdk.wxi ?>
+</Wix>
