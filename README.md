@@ -7,7 +7,7 @@ You can install the Dart SDK OFFLINE.
 
 - Windows (32bit or 64bit)
 - WiX TOOLSET
-- Dart SDK as a zip file (32bit and 64bit)
+- Dart SDK as zip files (32bit and 64bit)
 
 ## Installation
 
