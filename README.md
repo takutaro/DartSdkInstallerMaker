@@ -1,7 +1,7 @@
 # Dart SDK Installer Maker
 
 This will create the Dart SDK installer for Windows.  
-You can install the Dart SDK OFFLINE.
+You can install the Dart SDK to OFFLINE environment.
 
 ## Requirement
 
